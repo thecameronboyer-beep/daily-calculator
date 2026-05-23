@@ -187,7 +187,8 @@ h2 {
 }
 
 .mode-toggle button,
-.utility-button {
+.utility-button,
+.cut-step-controls button {
   min-height: 42px;
   padding: 8px 9px;
   border: 1px solid rgba(117, 132, 123, 0.42);
@@ -203,6 +204,8 @@ h2 {
 }
 
 .mode-toggle button.active,
+.cut-step-controls button:focus-visible,
+.cut-step-controls button:hover,
 .utility-button:focus-visible,
 .utility-button:hover {
   border-color: var(--system-cyan);
@@ -310,6 +313,20 @@ h2 {
   filter: drop-shadow(0 0 10px rgba(114, 217, 255, 0.18));
 }
 
+.cut-step-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.cut-step-controls button {
+  min-height: 30px;
+  padding: 5px 4px;
+  color: var(--system-cyan);
+  font-size: 0.48rem;
+  line-height: 1;
+}
+
 .result-card {
   display: grid;
   align-content: space-between;
@@ -378,6 +395,7 @@ h2 {
   }
 
   .mode-toggle button,
+  .cut-step-controls button,
   .utility-button {
     font-size: 0.54rem;
   }
@@ -405,6 +423,12 @@ h2 {
     min-height: 42px;
     padding-inline: 6px;
     font-size: 0.94rem;
+  }
+
+  .cut-step-controls button {
+    min-height: 28px;
+    padding-inline: 3px;
+    font-size: 0.42rem;
   }
 
   .result-card {

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useId, useMemo } from 'react';
 import {
   calculateShiftCount,
   calculateShortSampleWeight,
@@ -23,21 +23,31 @@ const initialShiftValues = {
   leavePieces: '',
 };
 
-function NumberField({ label, unit, value, onChange, integer = false }) {
+const CUT_LENGTH_STEP = 1 / 16;
+
+function formatInputDecimal(value) {
+  return Number(value.toFixed(4)).toString();
+}
+
+function NumberField({ label, unit, value, onChange, integer = false, children }) {
+  const inputId = useId();
+
   return (
-    <label className="number-field">
-      <span className="number-label">
+    <div className="number-field">
+      <label className="number-label" htmlFor={inputId}>
         <span>{label}</span>
         {unit ? <span className="number-unit">{unit}</span> : null}
-      </span>
+      </label>
       <input
+        id={inputId}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         inputMode={integer ? 'numeric' : 'decimal'}
         pattern={integer ? '-?[0-9]*' : undefined}
         autoComplete="off"
       />
-    </label>
+      {children}
+    </div>
   );
 }
 
@@ -89,6 +99,25 @@ export default function App() {
 
   function clearShift() {
     setShiftValues(initialShiftValues);
+  }
+
+  function adjustCutLength(delta) {
+    setWeightValues((current) => {
+      const currentValue = Number(String(current.cutLength).replaceAll(',', '').trim());
+
+      if (!Number.isFinite(currentValue) || currentValue <= 0) {
+        return delta > 0
+          ? { ...current, cutLength: formatInputDecimal(CUT_LENGTH_STEP) }
+          : current;
+      }
+
+      const nextValue = Math.max(CUT_LENGTH_STEP, currentValue + delta);
+
+      return {
+        ...current,
+        cutLength: formatInputDecimal(nextValue),
+      };
+    });
   }
 
   return (
@@ -149,7 +178,16 @@ export default function App() {
             unit="inches"
             value={weightValues.cutLength}
             onChange={(value) => updateWeightValue('cutLength', value)}
-          />
+          >
+            <div className="cut-step-controls" aria-label="Cut length adjustments">
+              <button type="button" onClick={() => adjustCutLength(-CUT_LENGTH_STEP)}>
+                - 1/16&quot;
+              </button>
+              <button type="button" onClick={() => adjustCutLength(CUT_LENGTH_STEP)}>
+                + 1/16&quot;
+              </button>
+            </div>
+          </NumberField>
           <NumberField
             label="Units Per Container"
             value={weightValues.unitsPerContainer}
