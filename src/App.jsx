@@ -18,7 +18,6 @@ const initialWeightValues = {
 const initialShiftValues = {
   arriveContainer: '',
   arrivePieces: '',
-  piecesPerContainer: '',
   leaveContainer: '',
   leavePieces: '',
 };
@@ -132,7 +131,10 @@ export default function App() {
     );
   }, [weightValues]);
 
-  const shiftResult = useMemo(() => calculateShiftCount(shiftValues), [shiftValues]);
+  const shiftResult = useMemo(
+    () => calculateShiftCount(shiftValues, weightValues.unitsPerContainer),
+    [shiftValues, weightValues.unitsPerContainer]
+  );
 
   function updateWeightValue(key, value) {
     setWeightValues((current) => ({ ...current, [key]: value }));
@@ -317,13 +319,6 @@ export default function App() {
               />
             </div>
           </div>
-
-          <NumberField
-            label="Pieces Per Container"
-            value={shiftValues.piecesPerContainer}
-            onChange={(value) => updateShiftValue('piecesPerContainer', value)}
-            integer
-          />
 
           <div className="shift-group">
             <p className="group-label">When Leaving</p>

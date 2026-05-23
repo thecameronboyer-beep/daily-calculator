@@ -1,4 +1,4 @@
-const CACHE_NAME = 'daily-calculator-v3';
+const CACHE_NAME = 'daily-calculator-v4';
 const APP_ROOT = new URL('./', self.location.href).href;
 const CORE_ASSETS = [
   './',

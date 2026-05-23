@@ -68,18 +68,18 @@ export function calculateShortSampleWeight(sampleGramsValue, cutLengthValue, uni
   };
 }
 
-export function calculateShiftCount(values) {
+export function calculateShiftCount(values, unitsPerContainerValue) {
   const arriveContainer = toNumber(values.arriveContainer);
   const arrivePieces = toNumber(values.arrivePieces);
-  const piecesPerContainer = toNumber(values.piecesPerContainer);
+  const unitsPerContainer = toNumber(unitsPerContainerValue);
   const leaveContainer = toNumber(values.leaveContainer);
   const leavePieces = toNumber(values.leavePieces);
 
   if (
     !isInteger(arriveContainer) ||
     !isNonNegativeInteger(arrivePieces) ||
-    !isPositive(piecesPerContainer) ||
-    !Number.isInteger(piecesPerContainer) ||
+    !isPositive(unitsPerContainer) ||
+    !Number.isInteger(unitsPerContainer) ||
     !isInteger(leaveContainer) ||
     !isNonNegativeInteger(leavePieces)
   ) {
@@ -87,7 +87,7 @@ export function calculateShiftCount(values) {
   }
 
   const containersCompleted = leaveContainer - arriveContainer;
-  const piecesMade = containersCompleted * piecesPerContainer + leavePieces - arrivePieces;
+  const piecesMade = containersCompleted * unitsPerContainer + leavePieces - arrivePieces;
 
   return {
     containersCompleted,
