@@ -232,7 +232,7 @@ h2 {
 }
 
 .input-grid.three-up {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .input-grid.two-up,
@@ -317,6 +317,48 @@ h2 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 5px;
+}
+
+.cut-length-field {
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr) minmax(104px, 0.42fr);
+  align-items: stretch;
+}
+
+.cut-length-field .number-label {
+  grid-column: 1 / -1;
+  min-height: 0;
+}
+
+.cut-length-field input {
+  grid-column: 1;
+  grid-row: 2 / 4;
+  min-height: 78px;
+}
+
+.cut-fraction-display {
+  display: grid;
+  align-content: center;
+  min-height: 38px;
+  padding: 6px 7px;
+  border: 1px solid rgba(114, 217, 255, 0.28);
+  border-radius: 6px;
+  background: rgba(6, 12, 14, 0.78);
+  font-family: "Roboto Mono", "Cascadia Mono", Consolas, monospace;
+}
+
+.cut-fraction-display span {
+  color: #aebeb4;
+  font-size: 0.48rem;
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.cut-fraction-display strong {
+  color: var(--system-cyan-strong);
+  font-size: 0.94rem;
+  line-height: 1.15;
 }
 
 .cut-step-controls button {
@@ -429,6 +471,27 @@ h2 {
     min-height: 28px;
     padding-inline: 3px;
     font-size: 0.42rem;
+  }
+
+  .cut-length-field {
+    grid-template-columns: minmax(0, 1fr) minmax(96px, 0.46fr);
+  }
+
+  .cut-length-field input {
+    min-height: 72px;
+  }
+
+  .cut-fraction-display {
+    min-height: 36px;
+    padding: 5px 6px;
+  }
+
+  .cut-fraction-display span {
+    font-size: 0.42rem;
+  }
+
+  .cut-fraction-display strong {
+    font-size: 0.8rem;
   }
 
   .result-card {

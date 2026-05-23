@@ -24,16 +24,61 @@ const initialShiftValues = {
 };
 
 const CUT_LENGTH_STEP = 1 / 16;
+const CUT_LENGTH_DENOMINATOR = 16;
 
 function formatInputDecimal(value) {
   return Number(value.toFixed(4)).toString();
 }
 
-function NumberField({ label, unit, value, onChange, integer = false, children }) {
+function parseInputNumber(value) {
+  return Number(String(value).replaceAll(',', '').trim());
+}
+
+function greatestCommonDivisor(firstValue, secondValue) {
+  let first = Math.abs(firstValue);
+  let second = Math.abs(secondValue);
+
+  while (second) {
+    const remainder = first % second;
+    first = second;
+    second = remainder;
+  }
+
+  return first || 1;
+}
+
+function formatCutLengthFraction(value) {
+  const number = parseInputNumber(value);
+
+  if (!Number.isFinite(number) || number <= 0) {
+    return '-';
+  }
+
+  let whole = Math.floor(number);
+  let numerator = Math.round((number - whole) * CUT_LENGTH_DENOMINATOR);
+
+  if (numerator === CUT_LENGTH_DENOMINATOR) {
+    whole += 1;
+    numerator = 0;
+  }
+
+  if (numerator === 0) {
+    return `${whole}"`;
+  }
+
+  const divisor = greatestCommonDivisor(numerator, CUT_LENGTH_DENOMINATOR);
+  const reducedNumerator = numerator / divisor;
+  const reducedDenominator = CUT_LENGTH_DENOMINATOR / divisor;
+  const fraction = `${reducedNumerator}/${reducedDenominator}"`;
+
+  return whole > 0 ? `${whole} ${fraction}` : fraction;
+}
+
+function NumberField({ label, unit, value, onChange, integer = false, children, className = '' }) {
   const inputId = useId();
 
   return (
-    <div className="number-field">
+    <div className={`number-field ${className}`}>
       <label className="number-label" htmlFor={inputId}>
         <span>{label}</span>
         {unit ? <span className="number-unit">{unit}</span> : null}
@@ -103,7 +148,7 @@ export default function App() {
 
   function adjustCutLength(delta) {
     setWeightValues((current) => {
-      const currentValue = Number(String(current.cutLength).replaceAll(',', '').trim());
+      const currentValue = parseInputNumber(current.cutLength);
 
       if (!Number.isFinite(currentValue) || currentValue <= 0) {
         return delta > 0
@@ -174,11 +219,22 @@ export default function App() {
             />
           )}
           <NumberField
+            label="Units Per Container"
+            value={weightValues.unitsPerContainer}
+            onChange={(value) => updateWeightValue('unitsPerContainer', value)}
+            integer
+          />
+          <NumberField
             label="Cut Length"
             unit="inches"
             value={weightValues.cutLength}
             onChange={(value) => updateWeightValue('cutLength', value)}
+            className="cut-length-field"
           >
+            <div className="cut-fraction-display" aria-live="polite">
+              <span>Fraction</span>
+              <strong>{formatCutLengthFraction(weightValues.cutLength)}</strong>
+            </div>
             <div className="cut-step-controls" aria-label="Cut length adjustments">
               <button type="button" onClick={() => adjustCutLength(-CUT_LENGTH_STEP)}>
                 - 1/16&quot;
@@ -188,12 +244,6 @@ export default function App() {
               </button>
             </div>
           </NumberField>
-          <NumberField
-            label="Units Per Container"
-            value={weightValues.unitsPerContainer}
-            onChange={(value) => updateWeightValue('unitsPerContainer', value)}
-            integer
-          />
         </div>
 
         <div className="result-grid">
